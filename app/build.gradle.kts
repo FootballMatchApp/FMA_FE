@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.github.bumptech.glide:glide:4.15.1")
     implementation("com.squareup.picasso:picasso:2.8")
@@ -46,9 +46,24 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.database)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // FirebaseUI for Firebase Realtime Database
+    implementation ("com.firebaseui:firebase-ui-database:9.0.0")
+
+    // FirebaseUI for Cloud Firestore
+    implementation ("com.firebaseui:firebase-ui-firestore:9.0.0")
+
+    // FirebaseUI for Firebase Auth
+    implementation ("com.firebaseui:firebase-ui-auth:9.0.0")
+
+
+    implementation ("com.google.firebase:firebase-analytics")
+    // FirebaseUI for Cloud Storage
+    implementation ("com.firebaseui:firebase-ui-storage:9.0.0")
 // UI & layout
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")

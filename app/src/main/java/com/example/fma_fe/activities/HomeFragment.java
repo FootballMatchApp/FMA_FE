@@ -1,6 +1,7 @@
 package com.example.fma_fe.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,11 @@ import com.example.fma_fe.R;
 import com.example.fma_fe.adapters.PostAdapter;
 import com.example.fma_fe.models.Post;
 import com.example.fma_fe.dialogs.PostDetailDialog;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,13 +54,28 @@ public class HomeFragment extends Fragment implements PostAdapter.OnPostClickLis
 
     @Override
     public void onPostClick(Post post) {
-        // Xử lý khi user click vào 1 post ở RecyclerView
-        // Ví dụ mở PostDetailDialog hoặc chuyển sang PostDetailActivity
-        Toast.makeText(getContext(), "Clicked post ID: " + post.getPostId(), Toast.LENGTH_SHORT).show();
+        PostDetailDialog dialog = new PostDetailDialog(requireContext(), post);
+        dialog.setOnActionClickListener(new PostDetailDialog.OnActionClickListener() {
+            @Override
+            public void onContactClick(Post post) {
+                Toast.makeText(getContext(), "Contacting team for post: " + post.getPostId(), Toast.LENGTH_SHORT).show();
+                // TODO: mở màn hình chat hoặc gửi yêu cầu
+            }
+
+            @Override
+            public void onCloseClick() {
+                // Optional: Bạn có thể log hoặc xử lý nếu cần
+                Toast.makeText(getContext(), "Dialog closed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        dialog.show(); // Hiển thị dialog
     }
+
 
     @Override
     public void onExpandClick(Post post) {
+
         // Xử lý khi user click vào nút expand
         // Ví dụ: mở dialog với thông tin chi tiết hoặc expand/collapse nội dung
         Toast.makeText(getContext(), "Expand clicked for post ID: " + post.getPostId(), Toast.LENGTH_SHORT).show();
@@ -187,40 +208,81 @@ public class HomeFragment extends Fragment implements PostAdapter.OnPostClickLis
     }
 
     private void loadSampleData() {
-        // Sample data - replace with actual API call
-        allPosts.clear();
+        DatabaseReference postsRef = FirebaseDatabase
+                .getInstance("https://fma-be-default-rtdb.asia-southeast1.firebasedatabase.app")
+                .getReference("matchposts");
 
-        Post post1 = new Post();
-        post1.setPostId(1);
-        post1.setTeamId(1);
-        post1.setPostedByPlayerId(1);
-        post1.setPitchId(55);
-        post1.setReceivingTeamId(null);
-        post1.setMatchTime("2025-07-03T18:00:00Z");
-        post1.setDescription("Chúng tôi tìm đối thủ vào tối thứ 7");
-        post1.setLookingFor("Opponent");
-        post1.setPostStatus("Open");
-        post1.setImageUrl("https://i.pinimg.com/736x/d4/a0/39/d4a039be5eea48c290126e548236ef64.jpg");
-        post1.setCreatedAt("2025-06-29T10:00:00Z");
-        post1.setUpdatedAt("2025-07-01T15:30:00Z");
+        postsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                allPosts.clear();
+                Log.d("FirebaseDebug", "Tổng số post: " + snapshot.getChildrenCount());
 
-        Post post2 = new Post();
-        post2.setPostId(2);
-        post2.setTeamId(102);
-        post2.setPostedByPlayerId(1002);
-        post2.setPitchId(56);
-        post2.setReceivingTeamId(103);
-        post2.setMatchTime("2025-07-05T20:00:00Z");
-        post2.setDescription("Cần thêm đồng đội cho trận đấu 7 người");
-        post2.setLookingFor("Teammate");
-        post2.setPostStatus("Open");
-        post2.setImageUrl("https://i.pinimg.com/736x/92/ee/dd/92eeddbe026c3c0451a1f74f8a1af63e.jpg");
-        post2.setCreatedAt("2025-06-30T09:45:00Z");
-        post2.setUpdatedAt("2025-07-01T15:30:00Z");
+                long totalPosts = snapshot.getChildrenCount();
+                final long[] loadedPosts = {0};
 
-        allPosts.add(post1);
-        allPosts.add(post2);
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                    Post post = postSnapshot.getValue(Post.class);
+                    if (post != null) {
+                        String pitchKey = post.getPitchId();  // 👉 vì pitchId đã là "pitch_1", "pitch_2"
+                        Log.d("PitchDebug", "Đang lấy pitch với key: " + pitchKey);
 
-        filterPosts();
+                        DatabaseReference pitchRef = FirebaseDatabase
+                                .getInstance("https://fma-be-default-rtdb.asia-southeast1.firebasedatabase.app")
+                                .getReference("pitches")
+                                .child(pitchKey);
+
+                        pitchRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot pitchSnapshot) {
+                                if (pitchSnapshot.exists()) {
+                                    String pitchName = pitchSnapshot.child("name").getValue(String.class);
+                                    post.setPitchName(pitchName != null ? pitchName : "Không rõ sân");
+                                } else {
+                                    post.setPitchName("Không rõ sân");
+                                }
+
+                                allPosts.add(post);
+                                Log.d("FirebaseDebug", "Post: " + post.getDescription() + ", Sân: " + post.getPitchName());
+
+                                loadedPosts[0]++;
+                                if (loadedPosts[0] == totalPosts) {
+                                    filterPosts();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Log.e("FirebaseError", "Lỗi khi tải pitch: " + error.getMessage());
+                                loadedPosts[0]++;
+                                if (loadedPosts[0] == totalPosts) {
+                                    filterPosts();
+                                }
+                            }
+                        });
+
+                    } else {
+                        Log.w("FirebaseDebug", "Không map được post: " + postSnapshot.getKey());
+                        loadedPosts[0]++;
+                        if (loadedPosts[0] == totalPosts) {
+                            filterPosts();
+                        }
+                    }
+                }
+
+                if (totalPosts == 0) {
+                    filterPosts();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("FirebaseError", "Lỗi: " + error.getMessage());
+            }
+        });
+
     }
+
+
+
 }
