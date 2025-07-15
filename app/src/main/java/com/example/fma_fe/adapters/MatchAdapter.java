@@ -50,7 +50,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchAdapter.MatchViewHol
 
         public MatchViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvTitle = itemView.findViewById(R.id.tvMatchTitle);
+            tvTitle = itemView.findViewById(R.id.tv_match_title);
             tvTime = itemView.findViewById(R.id.tvMatchTime);
             tvLocation = itemView.findViewById(R.id.tvMatchLocation);
         }

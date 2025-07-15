@@ -9,22 +9,22 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Tiêu đề trận đấu -->
+
         <TextView
-            android:id="@+id/tvMatchTitle"
+            android:id="@+id/tv_match_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="Chúng tôi tìm đối thủ vào tối thứ 7"
-            android:textColor="#1E1E1E"
+            android:text="Team A vs Team B"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginBottom="8dp"/>
 
-        <!-- Thời gian -->
+
         <TextView
             android:id="@+id/tvMatchTime"
             android:layout_width="wrap_content"
@@ -34,7 +34,7 @@
             android:textColor="#555555"
             android:textSize="14sp" />
 
-        <!-- Địa điểm -->
+
         <TextView
             android:id="@+id/tvMatchLocation"
             android:layout_width="wrap_content"

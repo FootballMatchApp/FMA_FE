@@ -1,6 +1,8 @@
 package com.example.fma_fe.models;
 
-public class Post {
+import java.io.Serializable;
+
+public class Post implements Serializable {
     private int postId;
     private int teamId;
     private int postedByPlayerId;
@@ -14,6 +16,10 @@ public class Post {
     private String createdAt;
     private String updatedAt;
     private String pitchName;
+    private String teamName;
+    private String receivingTeamName;
+    private String pitchLocation;
+
 
     public String getPitchName() { return pitchName; }
     public void setPitchName(String pitchName) { this.pitchName = pitchName; }
@@ -24,7 +30,7 @@ public class Post {
     public Post(int postId, int teamId, int postedByPlayerId, String pitchId,
                 Integer receivingTeamId, String matchTime, String description,
                 String lookingFor, String postStatus, String imageUrl,
-                String createdAt, String updatedAt) {
+                String createdAt, String updatedAt, String teamName, String receivingTeamName, String pitchLocation) {
         this.postId = postId;
         this.teamId = teamId;
         this.postedByPlayerId = postedByPlayerId;
@@ -37,6 +43,9 @@ public class Post {
         this.imageUrl = imageUrl;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.teamName = teamName;
+        this.receivingTeamName = receivingTeamName;
+        this.pitchLocation = pitchLocation;
     }
 
     // Getters and Setters
@@ -75,4 +84,28 @@ public class Post {
 
     public String getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
+    }
+
+    public String getReceivingTeamName() {
+        return receivingTeamName;
+    }
+
+    public void setReceivingTeamName(String receivingTeamName) {
+        this.receivingTeamName = receivingTeamName;
+    }
+
+    public String getPitchLocation() {
+        return pitchLocation;
+    }
+
+    public void setPitchLocation(String pitchLocation) {
+        this.pitchLocation = pitchLocation;
+    }
 }
