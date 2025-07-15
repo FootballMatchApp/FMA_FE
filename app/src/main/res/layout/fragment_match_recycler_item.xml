@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    card_view:cardElevation="4dp"
+    card_view:cardCornerRadius="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Tiêu đề trận đấu -->
+        <TextView
+            android:id="@+id/tvMatchTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Chúng tôi tìm đối thủ vào tối thứ 7"
+            android:textColor="#1E1E1E"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- Thời gian -->
+        <TextView
+            android:id="@+id/tvMatchTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="🕒 Jul 4, 2025 at 1:00 AM"
+            android:textColor="#555555"
+            android:textSize="14sp" />
+
+        <!-- Địa điểm -->
+        <TextView
+            android:id="@+id/tvMatchLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📍 Pitch #55"
+            android:textColor="#555555"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
